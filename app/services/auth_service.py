@@ -11,6 +11,9 @@ def register_user(payload):
     data = RegisterRequest.from_payload(payload)
     db = get_db()
 
+    if email_already_registered(data.email):
+        raise ValidationError("Este e-mail já está cadastrado.", status_code=409)
+
     try:
         cursor = db.execute(
             """
@@ -28,6 +31,20 @@ def register_user(payload):
         "nome": data.nome,
         "email": data.email
     }
+
+
+def email_already_registered(email):
+    usuario = get_db().execute(
+        """
+        SELECT id
+        FROM usuarios
+        WHERE lower(email) = lower(?)
+        LIMIT 1
+        """,
+        (email,)
+    ).fetchone()
+
+    return usuario is not None
 
 
 def authenticate_user(payload):
