@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Distance API</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Navegacao da aplicacao">
+        <header class="sidebar-header">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <div>
+              <h1>Distance API</h1>
+              <p>Rotas por CEP, mapa e itinerarios.</p>
+            </div>
+          </div>
+
+          <nav class="top-actions" aria-label="Conta">
+            {% if usuario %}
+              <span class="user-pill">{{ usuario.nome }}</span>
+              <a href="{{ url_for('main.logout') }}">Sair</a>
+            {% else %}
+              <a href="{{ url_for('main.login') }}">Entrar</a>
+              <a class="button-link" href="{{ url_for('main.cadastro') }}">Criar conta</a>
+            {% endif %}
+          </nav>
+        </header>
+
+        <nav class="sidebar-nav" aria-label="Funcionalidades">
+          <button class="nav-item is-active" type="button" data-panel-target="rota-simples">
+            <span class="nav-icon" aria-hidden="true">A-B</span>
+            <span>Calcular rota simples</span>
+          </button>
+          <button class="nav-item" type="button" data-panel-target="itinerario">
+            <span class="nav-icon" aria-hidden="true">+</span>
+            <span>Roteirizacao com pontos</span>
+          </button>
+          <button class="nav-item" type="button" data-panel-target="resumo">
+            <span class="nav-icon" aria-hidden="true">i</span>
+            <span>Resumo da rota</span>
+          </button>
+        </nav>
+
+        <section class="sidebar-panel is-active" data-panel="rota-simples">
+          <div class="panel-heading">
+            <h2>Rota simples</h2>
+            <p>Informe origem e destino para desenhar a rota no mapa.</p>
+          </div>
+
+          <form
+            id="route-form"
+            class="route-form"
+            data-authenticated="{{ 'true' if usuario else 'false' }}"
+            novalidate
+          >
+            <fieldset {% if not usuario %}disabled{% endif %}>
+              <legend>Origem</legend>
+              <label for="cep-origem">CEP de origem</label>
+              <input
+                id="cep-origem"
+                name="cep_origem"
+                type="text"
+                inputmode="numeric"
+                autocomplete="postal-code"
+                placeholder="00000-000"
+                maxlength="9"
+                required
+              >
+
+              <label for="numero-origem">Numero da origem</label>
+              <input
+                id="numero-origem"
+                name="numero_origem"
+                type="text"
+                inputmode="numeric"
+                autocomplete="address-line2"
+                placeholder="000"
+                required
+              >
+            </fieldset>
+
+            <fieldset {% if not usuario %}disabled{% endif %}>
+              <legend>Destino</legend>
+              <label for="cep-destino">CEP de destino</label>
+              <input
+                id="cep-destino"
+                name="cep_destino"
+                type="text"
+                inputmode="numeric"
+                autocomplete="postal-code"
+                placeholder="00000-000"
+                maxlength="9"
+                required
+              >
+
+              <label for="numero-destino">Numero do destino</label>
+              <input
+                id="numero-destino"
+                name="numero_destino"
+                type="text"
+                inputmode="numeric"
+                autocomplete="address-line2"
+                placeholder="000"
+                required
+              >
+            </fieldset>
+
+            <button id="submit-button" type="submit" {% if not usuario %}disabled{% endif %}>
+              Calcular rota
+            </button>
+          </form>
+
+          <div
+            id="status-message"
+            class="status-message {% if not usuario %}is-warning{% endif %}"
+            role="status"
+            aria-live="polite"
+          >{% if not usuario %}Entre ou crie uma conta para calcular rotas.{% endif %}</div>
+        </section>
+
+        <section class="sidebar-panel" data-panel="itinerario" hidden>
+          <div class="panel-heading">
+            <h2>Roteirizacao com varios pontos</h2>
+            <p>Monte visualmente uma sequencia de paradas para futura otimizacao.</p>
+          </div>
+
+          <form id="multi-route-form" class="route-form" novalidate>
+            <fieldset class="route-mode-fieldset">
+              <legend>Modo do itinerario</legend>
+              <div class="route-mode-options">
+                <label class="route-mode-card">
+                  <input
+                    type="radio"
+                    name="modo-destino"
+                    value="automatico"
+                    checked
+                  >
+                  <span>Destino automatico</span>
+                  <small>Escolhe a melhor parada final.</small>
+                </label>
+                <label class="route-mode-card">
+                  <input
+                    type="radio"
+                    name="modo-destino"
+                    value="fixo"
+                  >
+                  <span>Destino fixo</span>
+                  <small>Mantem o ultimo ponto como final.</small>
+                </label>
+              </div>
+            </fieldset>
+
+            <div id="stops-list" class="stops-list"></div>
+
+            <div class="form-actions">
+              <button id="add-stop-button" class="secondary-button" type="button">
+                Adicionar parada
+              </button>
+              <button id="calculate-itinerary-button" type="submit" {% if not usuario %}disabled{% endif %}>
+                Calcular itinerario
+              </button>
+            </div>
+          </form>
+
+          <div id="multi-status" class="status-message" role="status" aria-live="polite"></div>
+
+          <p class="helper-text">
+            A origem fica no primeiro ponto. No destino automatico, qualquer outro ponto pode ser escolhido como final.
+          </p>
+        </section>
+
+        <section class="sidebar-panel" data-panel="resumo" hidden>
+          <div class="panel-heading">
+            <h2>Resumo da rota</h2>
+            <p>Dados da ultima rota calculada e paradas preparadas.</p>
+          </div>
+
+          <article id="result-card" class="result-card" hidden>
+            <dl>
+              <div>
+                <dt>Origem</dt>
+                <dd id="resultado-origem">-</dd>
+              </div>
+              <div>
+                <dt>Destino</dt>
+                <dd id="resultado-destino">-</dd>
+              </div>
+              <div>
+                <dt>Destino escolhido</dt>
+                <dd id="resultado-destino-escolhido">-</dd>
+              </div>
+              <div>
+                <dt>Modo</dt>
+                <dd id="resultado-modo">-</dd>
+              </div>
+              <div>
+                <dt>Distancia</dt>
+                <dd id="resultado-distancia">-</dd>
+              </div>
+              <div>
+                <dt>Duracao estimada</dt>
+                <dd id="resultado-duracao">-</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article id="empty-summary" class="empty-summary">
+            <strong>Nenhuma rota calculada ainda.</strong>
+            <span>Use a rota simples para preencher este resumo.</span>
+          </article>
+
+          <article class="result-card">
+            <h2>Ordem original</h2>
+            <ol id="summary-original-stops" class="summary-stops">
+              <li>Nenhuma parada adicionada.</li>
+            </ol>
+          </article>
+
+          <article class="result-card">
+            <h2>Ordem otimizada</h2>
+            <ol id="summary-stops" class="summary-stops">
+              <li>Nenhuma parada adicionada.</li>
+            </ol>
+          </article>
+
+          <article class="result-card">
+            <h2>Tempo por trecho</h2>
+            <ol id="summary-legs" class="summary-stops">
+              <li>Nenhum trecho calculado.</li>
+            </ol>
+          </article>
+        </section>
+      </aside>
+
+      <section class="map-section" aria-label="Mapa da rota">
+        <div id="map" class="map">
+          <div class="map-fallback">
+            <strong>Mapa</strong>
+            <span>Insira sua chave publica do Google Maps JS para carregar o mapa.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      window.__googleMapsReady = false;
+      window.initMap = function () {
+        window.__googleMapsReady = true;
+        window.dispatchEvent(new Event("google-maps-ready"));
+      };
+    </script>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% if google_maps_js_api_key %}
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_js_api_key|urlencode }}&callback=initMap&libraries=geometry"
+        async
+        defer>
+      </script>
+    {% endif %}
+  </body>
+</html>

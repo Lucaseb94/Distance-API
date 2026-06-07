@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entrar | Distance API</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="auth-panel" aria-label="Login">
+        <header class="auth-header">
+          <a class="brand auth-brand" href="{{ url_for('main.index') }}">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>Distance API</span>
+          </a>
+          <h1>Entrar</h1>
+        </header>
+
+        <form class="auth-form" data-auth-form data-auth-endpoint="/api/auth/login">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="voce@email.com"
+            required
+          >
+
+          <label for="senha">Senha</label>
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Sua senha"
+            required
+          >
+
+          <div class="form-row">
+            <label class="check-option" for="lembrar">
+              <input id="lembrar" name="lembrar" type="checkbox">
+              <span>Lembrar acesso</span>
+            </label>
+            <a href="{{ url_for('main.cadastro') }}">Criar conta</a>
+          </div>
+
+          <button type="submit">Entrar</button>
+        </form>
+
+        <p class="auth-note" data-auth-message></p>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  </body>
+</html>

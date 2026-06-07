@@ -1,0 +1,119 @@
+.secondary-button {
+  background: #eef8f5;
+  color: var(--primary-dark);
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #d9f0ea;
+}
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.route-mode-fieldset {
+  gap: 10px;
+}
+
+.route-mode-options {
+  display: grid;
+  gap: 10px;
+}
+
+.route-mode-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  cursor: pointer;
+}
+
+.route-mode-card:has(input:checked) {
+  border-color: var(--primary);
+  background: #eef8f5;
+  box-shadow: 0 0 0 3px rgb(15 118 110 / 10%);
+}
+
+.route-mode-card input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--primary);
+}
+
+.route-mode-card span {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.route-mode-card small {
+  grid-column: 2;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.stops-list {
+  display: grid;
+  gap: 12px;
+}
+
+.stop-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.stop-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stop-card-title {
+  color: var(--primary-dark);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.stop-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.55fr;
+  gap: 10px;
+}
+
+.field-group {
+  display: grid;
+  gap: 8px;
+}
+
+.remove-stop-button {
+  min-height: 34px;
+  padding: 0 10px;
+  background: #fff1ef;
+  color: var(--danger);
+  font-size: 0.78rem;
+}
+
+.remove-stop-button:hover:not(:disabled) {
+  background: #f7d8d4;
+}
+
+.helper-text {
+  padding: 12px 14px;
+  border: 1px solid #f3d089;
+  border-radius: 8px;
+  background: #fff7e5;
+  color: var(--warning);
+  font-weight: 700;
+}
