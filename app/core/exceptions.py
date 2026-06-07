@@ -16,6 +16,10 @@ class AuthError(AppError):
     status_code = 401
 
 
+class UsageLimitError(AppError):
+    status_code = 403
+
+
 class ExternalApiError(AppError):
     status_code = 502
 

@@ -46,13 +46,13 @@ export function createStopForm({ stopsList, modeInputs, onChange }) {
           >
         </div>
         <div class="field-group">
-          <label for="parada-numero-${stopId}">Numero</label>
+          <label for="parada-numero-${stopId}">Numero opcional</label>
           <input
             id="parada-numero-${stopId}"
             name="numero"
             type="text"
             inputmode="numeric"
-            placeholder="000"
+            placeholder="Opcional"
           >
         </div>
       </div>

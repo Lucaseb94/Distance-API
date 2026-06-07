@@ -3,6 +3,13 @@ from dataclasses import dataclass
 from app.core.exceptions import ValidationError
 
 
+def clean_text(value):
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
 @dataclass
 class SimpleRouteRequest:
     cep_origem: str
@@ -13,10 +20,10 @@ class SimpleRouteRequest:
     @classmethod
     def from_payload(cls, payload):
         data = cls(
-            cep_origem=str(payload.get("cep_origem", "")).strip(),
-            numero_origem=str(payload.get("numero_origem", "")).strip(),
-            cep_destino=str(payload.get("cep_destino", "")).strip(),
-            numero_destino=str(payload.get("numero_destino", "")).strip()
+            cep_origem=clean_text(payload.get("cep_origem")),
+            numero_origem=clean_text(payload.get("numero_origem")),
+            cep_destino=clean_text(payload.get("cep_destino")),
+            numero_destino=clean_text(payload.get("numero_destino"))
         )
         data.validate()
         return data
@@ -24,9 +31,7 @@ class SimpleRouteRequest:
     def validate(self):
         campos_obrigatorios = {
             "cep_origem": (self.cep_origem, "CEP de origem é obrigatório."),
-            "numero_origem": (self.numero_origem, "Número da origem é obrigatório."),
             "cep_destino": (self.cep_destino, "CEP de destino é obrigatório."),
-            "numero_destino": (self.numero_destino, "Número do destino é obrigatório."),
         }
 
         for _, (valor, mensagem) in campos_obrigatorios.items():

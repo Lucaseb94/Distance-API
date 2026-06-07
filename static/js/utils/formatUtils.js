@@ -36,6 +36,17 @@ export function formatApiError(result, fallback) {
     return fallback;
   }
 
+  const limitError = result.errors?.find((error) => (
+    error?.code === "demo_route_limit"
+  ));
+
+  if (limitError) {
+    return [
+      result.error || result.message || "Limite da demo atingido.",
+      `Você já usou ${limitError.used} de ${limitError.limit} consultas disponíveis.`
+    ].join(" ");
+  }
+
   const baseMessage = result.error || result.message || fallback;
   const parts = [baseMessage];
 

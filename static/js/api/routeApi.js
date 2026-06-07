@@ -7,6 +7,7 @@ export class ApiError extends Error {
     super(formatApiError(result, fallback));
     this.result = result;
     this.redirect = result?.redirect;
+    this.code = result?.error_code || result?.errors?.[0]?.code;
   }
 }
 

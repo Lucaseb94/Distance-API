@@ -10,6 +10,7 @@ Variaveis necessarias no ambiente de producao:
 
 - `APP_ENV=production`
 - `SECRET_KEY`: chave secreta Flask. No `render.yaml`, o Render pode gerar automaticamente.
+- `DEMO_ROUTE_LIMIT`: limite de consultas por usuario na demo. O padrao e `4`.
 - `GOOGLE_MAPS_API_KEY`: chave server-side usada pela Google Routes API.
 - `GOOGLE_MAPS_JS_API_KEY`: chave publica usada pelo Google Maps JavaScript API.
 

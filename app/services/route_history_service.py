@@ -1,4 +1,43 @@
+from app.core.config import Config
+from app.core.exceptions import UsageLimitError
 from app.database import get_db
+
+
+def count_user_routes(usuario_id):
+    row = get_db().execute(
+        """
+        SELECT COUNT(*) AS total
+        FROM rotas
+        WHERE usuario_id = ?
+        """,
+        (usuario_id,)
+    ).fetchone()
+
+    return row["total"] if row else 0
+
+
+def ensure_demo_route_limit(usuario_id):
+    limit = Config.DEMO_ROUTE_LIMIT
+
+    if limit <= 0:
+        return
+
+    total = count_user_routes(usuario_id)
+
+    if total >= limit:
+        raise UsageLimitError(
+            f"Você atingiu o limite de {limit} consultas da versão demo.",
+            errors=[{
+                "field": "demo_route_limit",
+                "code": "demo_route_limit",
+                "detail": (
+                    "Crie uma nova conta ou ajuste DEMO_ROUTE_LIMIT "
+                    "para liberar mais consultas."
+                ),
+                "limit": limit,
+                "used": total
+            }]
+        )
 
 
 def save_simple_route(usuario_id, payload, resultado):

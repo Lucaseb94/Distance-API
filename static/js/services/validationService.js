@@ -3,16 +3,8 @@ export function validateSimpleRoute(data) {
     return "Informe o CEP de origem.";
   }
 
-  if (!data.numero_origem) {
-    return "Informe o numero da origem.";
-  }
-
   if (!data.cep_destino) {
     return "Informe o CEP de destino.";
-  }
-
-  if (!data.numero_destino) {
-    return "Informe o numero do destino.";
   }
 
   return null;
@@ -20,10 +12,10 @@ export function validateSimpleRoute(data) {
 
 
 export function validateItinerary(stops, destinationMode) {
-  const incomplete = stops.some((stop) => !stop.cep || !stop.numero);
+  const incomplete = stops.some((stop) => !stop.cep);
 
   if (incomplete) {
-    return "Preencha CEP e numero de todos os pontos.";
+    return "Preencha o CEP de todos os pontos.";
   }
 
   if (destinationMode === "automatico" && stops.length < 3) {

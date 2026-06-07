@@ -153,7 +153,8 @@ function itinerarySuccessMessage(result) {
 
 
 function handleError(error, statusElement, fallback) {
-  showStatus(statusElement, error.message || fallback, "is-error");
+  const statusType = error.code === "demo_route_limit" ? "is-warning" : "is-error";
+  showStatus(statusElement, error.message || fallback, statusType);
 
   if (error.redirect) {
     window.setTimeout(() => {

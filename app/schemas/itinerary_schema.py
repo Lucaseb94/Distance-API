@@ -6,6 +6,13 @@ from app.core.exceptions import ValidationError
 MAX_ITINERARY_POINTS = 27
 
 
+def clean_text(value):
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
 def normalize_destination_mode(mode):
     normalized = str(mode or "fixo").strip().lower()
 
@@ -26,8 +33,8 @@ class StopRequest:
             raise ValidationError(f"Ponto {index + 1}: dados inválidos.")
 
         data = cls(
-            cep=str(payload.get("cep", "")).strip(),
-            numero=str(payload.get("numero", "")).strip()
+            cep=clean_text(payload.get("cep")),
+            numero=clean_text(payload.get("numero"))
         )
         data.validate(index)
         return data
@@ -35,9 +42,6 @@ class StopRequest:
     def validate(self, index):
         if not self.cep:
             raise ValidationError(f"Ponto {index + 1}: CEP é obrigatório.")
-
-        if not self.numero:
-            raise ValidationError(f"Ponto {index + 1}: número é obrigatório.")
 
 
 @dataclass

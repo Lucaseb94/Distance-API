@@ -2,7 +2,10 @@ from app.core.exceptions import ExternalApiError
 from app.schemas.itinerary_schema import ItineraryRequest
 from app.services.google_routes_service import GoogleRoute
 from app.services.address_service import AddressService
-from app.services.route_history_service import save_itinerary
+from app.services.route_history_service import (
+    ensure_demo_route_limit,
+    save_itinerary,
+)
 from app.services.route_optimizer_service import combine_stops_with_route
 
 
@@ -13,6 +16,7 @@ class ItineraryService:
 
     def calculate_itinerary(self, payload, usuario_id):
         data = ItineraryRequest.from_payload(payload)
+        ensure_demo_route_limit(usuario_id)
         stops = self.build_stops(data.paradas)
         route = self.calculate_route_by_mode(
             [stop["endereco"] for stop in stops],

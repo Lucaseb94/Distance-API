@@ -6,7 +6,7 @@ Aplicacao demo para calculo de rotas, validacao de enderecos por CEP e roteiriza
 
 - Cadastro e login de usuarios.
 - Calculo de rota simples entre origem e destino.
-- Validacao de CEP e numero antes do calculo da rota.
+- Validacao de CEP antes do calculo da rota, com numero opcional.
 - Exibicao da rota no mapa com marcadores de origem e destino.
 - Resumo com endereco, distancia e tempo estimado.
 - Roteirizacao com multiplos pontos.
@@ -93,6 +93,7 @@ http://127.0.0.1:5000
 - `GOOGLE_MAPS_JS_API_KEY`: chave publica usada pelo mapa no frontend.
 - `APP_ENV`: use `production` no ambiente de deploy.
 - `DATABASE_PATH`: opcional, permite definir um caminho customizado para o SQLite.
+- `DEMO_ROUTE_LIMIT`: limite de consultas por usuario na demo. O padrao e `4`.
 
 Nunca envie o arquivo `.env` para o GitHub. Ele ja esta protegido pelo `.gitignore`.
 
@@ -105,6 +106,7 @@ Configurar no ambiente de producao:
 ```text
 APP_ENV=production
 SECRET_KEY=<gerada-pelo-render-ou-manual>
+DEMO_ROUTE_LIMIT=4
 GOOGLE_MAPS_API_KEY=<sua-chave-server-side>
 GOOGLE_MAPS_JS_API_KEY=<sua-chave-publica-js>
 ```

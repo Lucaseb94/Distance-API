@@ -2,7 +2,10 @@ from app.core.exceptions import ExternalApiError
 from app.schemas.route_schema import SimpleRouteRequest
 from app.services.google_routes_service import GoogleRoute
 from app.services.address_service import AddressService
-from app.services.route_history_service import save_simple_route
+from app.services.route_history_service import (
+    ensure_demo_route_limit,
+    save_simple_route,
+)
 
 
 class RouteService:
@@ -12,6 +15,7 @@ class RouteService:
 
     def calculate_simple_route(self, payload, usuario_id):
         data = SimpleRouteRequest.from_payload(payload)
+        ensure_demo_route_limit(usuario_id)
         origem = self.address_service.resolve(
             data.cep_origem,
             numero=data.numero_origem,
