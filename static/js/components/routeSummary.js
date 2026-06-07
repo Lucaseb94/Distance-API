@@ -1,4 +1,3 @@
-import { escapeHtml } from "../utils/domUtils.js";
 import {
   formatDestinationMode,
   formatDistance,
@@ -41,37 +40,44 @@ export function createRouteSummary(elements, sidebar) {
       || stop.numero
     ));
 
+    list.replaceChildren();
+
     if (!filledStops.length) {
-      list.innerHTML = "<li>Nenhuma parada adicionada.</li>";
+      appendListItem(list, "Nenhuma parada adicionada.");
       return;
     }
 
-    list.innerHTML = filledStops
-      .map((stop, index) => {
-        if (stop.endereco) {
-          return `<li>${index + 1}. ${escapeHtml(stop.endereco)}</li>`;
-        }
+    filledStops.forEach((stop, index) => {
+      if (stop.endereco) {
+        appendListItem(list, `${index + 1}. ${stop.endereco}`);
+        return;
+      }
 
-        const cep = escapeHtml(stop.cep || "CEP nao informado");
-        const numero = escapeHtml(stop.numero || "sem numero");
-        return `<li>Parada ${index + 1}: ${cep}, ${numero}</li>`;
-      })
-      .join("");
+      const cep = stop.cep || "CEP nao informado";
+      const numero = stop.numero || "sem numero";
+      appendListItem(list, `Parada ${index + 1}: ${cep}, ${numero}`);
+    });
   }
 
   function renderLegs(legs) {
+    elements.legs.replaceChildren();
+
     if (!legs.length) {
-      elements.legs.innerHTML = "<li>Nenhum trecho calculado.</li>";
+      appendListItem(elements.legs, "Nenhum trecho calculado.");
       return;
     }
 
-    elements.legs.innerHTML = legs
-      .map((leg) => {
-        const distance = formatDistance(leg.distancia_km);
-        const duration = formatDuration(leg.duracao_minutos);
-        return `<li>Trecho ${leg.ordem}: ${distance}, ${duration}</li>`;
-      })
-      .join("");
+    legs.forEach((leg) => {
+      const distance = formatDistance(leg.distancia_km);
+      const duration = formatDuration(leg.duracao_minutos);
+      appendListItem(elements.legs, `Trecho ${leg.ordem}: ${distance}, ${duration}`);
+    });
+  }
+
+  function appendListItem(list, text) {
+    const item = document.createElement("li");
+    item.textContent = text;
+    list.appendChild(item);
   }
 
   return {

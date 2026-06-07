@@ -1,4 +1,4 @@
-from flask import session, url_for
+from flask import current_app, session, url_for
 
 from app.core.exceptions import AppError
 from app.utils.response_utils import error_response
@@ -33,8 +33,8 @@ def handle_app_error(error):
 
 
 def handle_unexpected_error(error):
+    current_app.logger.exception("Erro inesperado na aplicação")
     return error_response(
         "Erro interno da aplicação.",
-        status=500,
-        errors=[{"field": "server", "detail": str(error)}]
+        status=500
     )

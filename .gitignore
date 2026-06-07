@@ -6,3 +6,5 @@ __pycache__/
 instance/
 *.sqlite
 *.db
+.codex
+.agents

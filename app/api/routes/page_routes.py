@@ -26,7 +26,7 @@ def cadastro():
     return render_template("cadastro.html")
 
 
-@main_bp.route("/logout")
+@main_bp.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     return redirect(url_for("main.login"))

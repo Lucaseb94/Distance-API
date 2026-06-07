@@ -132,6 +132,24 @@ a:hover {
   text-decoration: none;
 }
 
+.logout-form {
+  margin: 0;
+}
+
+.logout-form button {
+  border: 0;
+  background: transparent;
+  color: var(--primary-dark);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 0;
+}
+
+.logout-form button:hover {
+  text-decoration: underline;
+}
+
 .user-pill {
   max-width: 180px;
   overflow: hidden;
