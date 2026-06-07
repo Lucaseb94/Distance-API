@@ -73,6 +73,14 @@ class BuscaCEP:
                 }
 
             if "erro" in data:
+                if self.deve_tentar_cep_generico(cep_limpo):
+                    return self.montar_resposta_cep_generico(
+                        cep,
+                        cep_limpo,
+                        validacao["cep_formatado"],
+                        data
+                    )
+
                 return {
                     "valido": False,
                     "cep_digitado": cep,
@@ -150,6 +158,39 @@ class BuscaCEP:
         partes.append("Brasil")
 
         return ", ".join(partes)
+
+    def deve_tentar_cep_generico(self, cep_limpo):
+        return isinstance(cep_limpo, str) and cep_limpo.endswith("000")
+
+    def montar_resposta_cep_generico(
+        self,
+        cep_digitado,
+        cep_limpo,
+        cep_formatado,
+        dados_viacep
+    ):
+        endereco_formatado = f"{cep_formatado}, Brasil"
+
+        return {
+            "valido": True,
+            "cep_digitado": cep_digitado,
+            "cep_limpo": cep_limpo,
+            "cep_formatado": cep_formatado,
+            "logradouro": None,
+            "numero": None,
+            "complemento": None,
+            "bairro": None,
+            "cidade": None,
+            "uf": None,
+            "estado": None,
+            "regiao": None,
+            "ibge": None,
+            "ddd": None,
+            "endereco_completo": endereco_formatado,
+            "endereco_google": endereco_formatado,
+            "dados_viacep": dados_viacep,
+            "fonte_endereco": "cep_generico"
+        }
 
     def incluir_numero(self, endereco, numero):
         if not endereco:
